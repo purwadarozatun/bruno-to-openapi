@@ -1,0 +1,1187 @@
+openapi: 3.0.0
+info:
+    title: API from Bruno
+    version: 1.0.0
+servers:
+    - url: '{{API_URL}}'
+paths:
+    /:
+        get:
+            summary: Unnamed
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/auth/login:
+        post:
+            summary: Login
+            tags:
+                - Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "username": "admin",
+                                "password": "password123"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/auth/password:
+        put:
+            summary: Change Password
+            tags:
+                - Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "old_password": "password123",
+                                "new_password": "newpassword123"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/auth/profile:
+        get:
+            summary: Get Profile
+            tags:
+                - Auth
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Profile
+            tags:
+                - Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "email": "updated@example.com"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/auth/refresh:
+        post:
+            summary: Refresh Token
+            tags:
+                - Auth
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/auth/register:
+        post:
+            summary: Register
+            tags:
+                - Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "username": "admin",
+                                "email": "admin@example.com",
+                                "password": "password123",
+                                "role": "1"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku:
+        post:
+            summary: Create Bahan Baku
+            tags:
+                - Master Data - Bahan Baku
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Tepung Terigu",
+                                "kategori_id": 9,
+                                "satuan_id": 1,
+                                "deskripsi": "Tepung terigu protein tinggi",
+                                "minimum_stock": 100.0,
+                                "maximum_stock": 1000.0,
+                                "harga_beli": 15000.0
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep:
+        post:
+            summary: Create Bahan Baku Resep
+            tags:
+                - Bahan Baku Resep
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "bahan_baku_id": 4,
+                                "resep_id": 5,
+                                "jumlah": 100.5
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep/1:
+        delete:
+            summary: Delete Bahan Baku Resep
+            tags:
+                - Bahan Baku Resep
+            responses:
+                "200":
+                    description: Success
+        get:
+            summary: Get Bahan Baku Resep by ID
+            tags:
+                - Bahan Baku Resep
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Bahan Baku Resep
+            tags:
+                - Bahan Baku Resep
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "bahan_baku_id": 4,
+                                "resep_id": 1,
+                                "jumlah": 150.75
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep/bahan-baku/4:
+        get:
+            summary: Get Reseps by Bahan Baku
+            tags:
+                - Bahan Baku Resep
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep/resep/1:
+        get:
+            summary: Get Bahan Baku by Resep
+            tags:
+                - Bahan Baku Resep
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep/upsert:
+        post:
+            summary: Upsert Bahan Baku Resep
+            tags:
+                - Bahan Baku Resep
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "bahan_baku_id": 4,
+                                "resep_id": 1,
+                                "jumlah": 200.0
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku-resep?page=1&limit=10:
+        get:
+            summary: Get All Bahan Baku Resep
+            tags:
+                - Bahan Baku Resep
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku/1:
+        delete:
+            summary: Delete Bahan Baku
+            tags:
+                - Master Data - Bahan Baku
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku/4:
+        get:
+            summary: Get Bahan Baku by ID
+            tags:
+                - Master Data - Bahan Baku
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Bahan Baku
+            tags:
+                - Master Data - Bahan Baku
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Tepung Terigu PERMI",
+                                "kategori_id": 9,
+                                "satuan_id": 1,
+                                "deskripsi": "Tepung terigu protein tinggi",
+                                "minimum_stock": 100.0,
+                                "maximum_stock": 1000.0,
+                                "harga_beli": 15000.0
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/bahan-baku?page=1&limit=10:
+        get:
+            summary: Get All Bahan Baku
+            tags:
+                - Master Data - Bahan Baku
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/gudang:
+        post:
+            summary: Create Gudang
+            tags:
+                - Master Data - Gudang
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "name": "Gudang Utama",
+                                "printer_url": "http://192.168.1.100:9100",
+                                "printer_type": "thermal",
+                                "is_checking": false
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/gudang?page=1&limit=10:
+        get:
+            summary: Get All Gudang
+            tags:
+                - Master Data - Gudang
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories:
+        post:
+            summary: Create Restock History
+            tags:
+                - Restock Histories
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nomor_po": "",
+                                "tanggal": "2026-02-14",
+                                "supplier_id": 1,
+                                "type": "PEMBELIAN",
+                                "total": 1000000,
+                                "diskon": 50000,
+                                "cash": 950000,
+                                "kasbon": 0,
+                                "nomor_penerimaan": "RCP001",
+                                "station_id": 1,
+                                "items": [
+                                  {
+                                    "bahan_baku_id": 1,
+                                    "jumlah": 100,
+                                    "harga": 5000.00,
+                                    "sub_total": 500000.00
+                                  },
+                                  {
+                                    "bahan_baku_id": 2,
+                                    "jumlah": 50,
+                                    "harga": 10000.00,
+                                    "sub_total": 500000.00
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories/1:
+        delete:
+            summary: Delete Restock History
+            tags:
+                - Restock Histories
+            responses:
+                "200":
+                    description: Success
+        get:
+            summary: Get Restock History by ID
+            tags:
+                - Restock Histories
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Restock History
+            tags:
+                - Restock Histories
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: "{\n    \"nomor_po\": \"PO1707901234-UPDATED\",\n    \"tanggal\": \"2026-02-15\",\n    \"supplier_id\": 1,\n    \"type\": \"PEMBELIAN\", \n    \"total\": 1200000,\n    \"nomor_penerimaan\": \"RCP001-UPDATED\",\n    \"station_id\": 1"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories/1/details:
+        get:
+            summary: Get Restock Details
+            tags:
+                - Restock Histories
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories/1/status:
+        put:
+            summary: Update Status
+            tags:
+                - Restock Histories
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "status": "TRANSFER"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories/po/PO1707901234:
+        get:
+            summary: Get by Nomor PO
+            tags:
+                - Restock Histories
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/restock-histories?page=1&limit=10:
+        get:
+            summary: Get All Restock Histories
+            tags:
+                - Restock Histories
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/1:
+        get:
+            summary: Get Movement by ID
+            tags:
+                - Stock Movements
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/adjustment:
+        post:
+            summary: Stock Adjustment
+            tags:
+                - Stock Movements
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "material_id": 1,
+                                "warehouse_id": 1,
+                                "new_quantity": 75.0,
+                                "reason": "Stock opname adjustment"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/bulk-stock-in:
+        post:
+            summary: Bulk Stock In
+            tags:
+                - Stock Movements
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "tanggal": "2026-02-14",
+                                "supplier_id": 2,
+                                "nomor_po": "PO-2026-001",
+                                "type": "purchase",
+                                "total": 5000000,
+                                "diskon": 250000,
+                                "cash": 4750000,
+                                "kasbon": 0,
+                                "nomor_penerimaan": "RCV-2026-001",
+                                "station_id": 1,
+                                "items": [
+                                  {
+                                    "bahan_baku_id": 5,
+                                    "jumlah": 100,
+                                    "harga": 25000.00,
+                                    "sub_total": 2500000.00
+                                  },
+                                  {
+                                    "bahan_baku_id": 6,
+                                    "jumlah": 50,
+                                    "harga": 50000.00,
+                                    "sub_total": 2500000.00
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/date-range?start_date=2026-01-01&end_date=2026-02-14&page=1&limit=10:
+        get:
+            summary: Get Movements by Date Range
+            tags:
+                - Stock Movements
+            parameters:
+                - name: start_date
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "2026-01-01"
+                - name: end_date
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "2026-02-14"
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/material/1?page=1&limit=10:
+        get:
+            summary: Get Movements by Material
+            tags:
+                - Stock Movements
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/stock-in:
+        post:
+            summary: Stock In
+            tags:
+                - Stock Movements
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "material_id": 4,
+                                "warehouse_id": 3,
+                                "quantity": 100.5,
+                                "reference_type": "restock",
+                                "reference_id": 1,
+                                "notes": "Stock masuk dari supplier"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/stock-out:
+        post:
+            summary: Stock Out
+            tags:
+                - Stock Movements
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "material_id": 1,
+                                "warehouse_id": 1,
+                                "quantity": 50.0,
+                                "reference_type": "usage",
+                                "notes": "Digunakan untuk produksi"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/summary?warehouse_id=1&material_id=1&days=30:
+        get:
+            summary: Analytics - Movement Summary
+            tags:
+                - Stock Movements
+            parameters:
+                - name: warehouse_id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: material_id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: days
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "30"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/top-materials?days=30&limit=10:
+        get:
+            summary: Analytics - Top Moving Materials
+            tags:
+                - Stock Movements
+            parameters:
+                - name: days
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "30"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/transfer:
+        post:
+            summary: Stock Transfer
+            tags:
+                - Stock Movements
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "from_warehouse_id": 1,
+                                "to_warehouse_id": 2,
+                                "material_id": 1,
+                                "quantity": 25.0,
+                                "notes": "Transfer antar gudang"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/type/in?page=1&limit=10:
+        get:
+            summary: Get Movements by Type
+            tags:
+                - Stock Movements
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/user-activity/1?days=30:
+        get:
+            summary: Analytics - User Activity
+            tags:
+                - Stock Movements
+            parameters:
+                - name: days
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "30"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements/warehouse/1?page=1&limit=10:
+        get:
+            summary: Get Movements by Warehouse
+            tags:
+                - Stock Movements
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock-movements?page=1&limit=10:
+        get:
+            summary: Get All Movements
+            tags:
+                - Stock Movements
+            parameters:
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock/low-stock?page=1&limit=10:
+        get:
+            summary: Get Low Stock Items
+            tags:
+                - Stock Gudang
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock/material/1:
+        get:
+            summary: Get Stock by Material
+            tags:
+                - Stock Gudang
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock/warehouse/1?page=1&limit=10:
+        get:
+            summary: Get Stock by Warehouse
+            tags:
+                - Stock Gudang
+            parameters:
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/stock?page=1&limit=10:
+        get:
+            summary: Get All Stock
+            tags:
+                - Stock Gudang
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/suppliers:
+        post:
+            summary: Create Supplier
+            tags:
+                - Suppliers
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "kode": "SUP002",
+                                "nama": "PT Supplier Baru",
+                                "deskripsi": "Supplier bahan baku berkualitas tinggi",
+                                "tipe_supplier": "local",
+                                "is_active": true,
+                                "kontak": "Jane Smith",
+                                "email": "contact@supplierbaru.com",
+                                "telepon": "081987654321",
+                                "wa": "081987654321",
+                                "website": "https://supplierbaru.com",
+                                "alamat": "Jl. Industri No. 456",
+                                "kota": "Bandung",
+                                "provinsi": "Jawa Barat",
+                                "kode_pos": "40123",
+                                "negara": "Indonesia",
+                                "npwp": "98.765.432.1-098.000",
+                                "bank_name": "Bank XYZ",
+                                "bank_account": "9876543210",
+                                "bank_holder": "PT Supplier Baru",
+                                "lead_time_days": 5,
+                                "min_order_value": 1000000,
+                                "payment_term_days": 14,
+                                "discount_percent": 2.5,
+                                "pic_name": "Jane Smith",
+                                "pic_phone": "081987654321",
+                                "pic_email": "jane@supplierbaru.com",
+                                "keterangan": "Supplier terpercaya dengan pengalaman 10+ tahun"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/suppliers/1:
+        get:
+            summary: Get Supplier by ID
+            tags:
+                - Suppliers
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Supplier
+            tags:
+                - Suppliers
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "kode": "SUP001",
+                                "nama": "PT Supplier ABC Updated",
+                                "deskripsi": "Supplier utama yang sudah diupdate",
+                                "tipe_supplier": "local",
+                                "is_active": true,
+                                "kontak": "John Doe Jr",
+                                "email": "updated@abc.com",
+                                "telepon": "081234567891",
+                                "wa": "081234567891",
+                                "alamat": "Jl. Supplier Baru No. 123",
+                                "kota": "Jakarta",
+                                "provinsi": "DKI Jakarta",
+                                "lead_time_days": 10,
+                                "payment_term_days": 45,
+                                "discount_percent": 3.0,
+                                "keterangan": "Updated supplier information"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/suppliers/999:
+        delete:
+            summary: Delete Supplier
+            tags:
+                - Suppliers
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/suppliers/active:
+        get:
+            summary: Get Active Suppliers
+            tags:
+                - Suppliers
+            responses:
+                "200":
+                    description: Success
+    /api/v1/gudang/suppliers?page=1&limit=10:
+        get:
+            summary: Get All Suppliers
+            tags:
+                - Suppliers
+            parameters:
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku:
+        post:
+            summary: Create Kategori
+            tags:
+                - Kategori Bahan Baku
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Bahan Pokok",
+                                "kode": "BP001",
+                                "deskripsi": "Kategori untuk bahan-bahan pokok",
+                                "parent_id": null,
+                                "min_stock_days": 7,
+                                "max_stock_days": 30,
+                                "reorder_threshold": 20.0,
+                                "lead_time_days": 3,
+                                "is_active": true
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku/1:
+        delete:
+            summary: Delete Kategori
+            tags:
+                - Kategori Bahan Baku
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku/1/optimal-stock?avg_daily_usage=10.5:
+        get:
+            summary: Calculate Optimal Stock
+            tags:
+                - Kategori Bahan Baku
+            parameters:
+                - name: avg_daily_usage
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10.5"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku/1/stats:
+        get:
+            summary: Get Category Stats
+            tags:
+                - Kategori Bahan Baku
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku/9:
+        get:
+            summary: Get Kategori by ID
+            tags:
+                - Kategori Bahan Baku
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Kategori
+            tags:
+                - Kategori Bahan Baku
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Bahanasd",
+                                "kode": "BP001222232222",
+                                "deskripsi": "Kategori untuk bahan-bahan pokok",
+                                "parent_id": null,
+                                "min_stock_days": 7,
+                                "max_stock_days": 30,
+                                "reorder_threshold": 20.0,
+                                "lead_time_days": 3,
+                                "is_active": true
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku/tree:
+        get:
+            summary: Get Category Tree
+            tags:
+                - Kategori Bahan Baku
+            responses:
+                "200":
+                    description: Success
+    /api/v1/kategori-bahan-baku?page=1&limit=10:
+        get:
+            summary: Get All Kategori
+            tags:
+                - Kategori Bahan Baku
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan:
+        post:
+            summary: Create Satuan
+            tags:
+                - Satuan
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Kilogram",
+                                "singkatan": "Kg",
+                                "kategori": "BERAT",
+                                "deskripsi": "Unit berat dalam kilogram",
+                                "conversion_rate": 1.0,
+                                "base_unit": null,
+                                "is_active": true
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan/1:
+        delete:
+            summary: Delete Satuan
+            tags:
+                - Satuan
+            responses:
+                "200":
+                    description: Success
+        get:
+            summary: Get Satuan by ID
+            tags:
+                - Satuan
+            responses:
+                "200":
+                    description: Success
+        put:
+            summary: Update Satuan
+            tags:
+                - Satuan
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        example: |-
+                            {
+                                "nama": "Kilogram Updated",
+                                "singkatan": "Kg",
+                                "kategori": "BERAT",
+                                "deskripsi": "Unit berat dalam kilogram - updated",
+                                "conversion_rate": 1.0,
+                                "base_unit": null,
+                                "is_active": true
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan/active:
+        get:
+            summary: Get Active Satuan
+            tags:
+                - Satuan
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan/convert?from_unit_id=1&to_unit_id=2&quantity=10:
+        get:
+            summary: Convert Quantity
+            tags:
+                - Satuan
+            parameters:
+                - name: from_unit_id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: to_unit_id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "2"
+                - name: quantity
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan/search?q=kg&page=1&limit=10:
+        get:
+            summary: Search Satuan
+            tags:
+                - Satuan
+            parameters:
+                - name: q
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: kg
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /api/v1/satuan?page=1&limit=10:
+        get:
+            summary: Get All Satuan
+            tags:
+                - Satuan
+            parameters:
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "1"
+                - name: limit
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                  example: "10"
+            responses:
+                "200":
+                    description: Success
+    /health:
+        get:
+            summary: Health Check
+            responses:
+                "200":
+                    description: Success
+    /users:
+        get:
+            summary: Get All Users
+            tags:
+                - User Management
+            responses:
+                "200":
+                    description: Success
+    /users/1:
+        get:
+            summary: Get User by ID
+            tags:
+                - User Management
+            responses:
+                "200":
+                    description: Success
