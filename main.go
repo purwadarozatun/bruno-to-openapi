@@ -19,15 +19,15 @@ const (
 )
 
 type Request struct {
-	Method   string
-	URL      string
-	Headers  map[string]string
-	Query    map[string]string
-	Params   map[string]string
-	Body     string
-	BodyType string
-	Name     string
-	Tag      string
+	Method     string
+	URL        string
+	Headers    map[string]string
+	Query      map[string]string
+	PathParams map[string]string
+	Body       string
+	BodyType   string
+	Name       string
+	Tag        string
 }
 
 type OpenAPI struct {
@@ -72,7 +72,12 @@ type RequestBody struct {
 }
 
 type MediaType struct {
-	Example any `yaml:"example,omitempty"`
+	Schema  *MediaSchema `yaml:"schema,omitempty"`
+	Example any          `yaml:"example,omitempty"`
+}
+
+type MediaSchema struct {
+	Type string `yaml:"type"`
 }
 
 type Response struct {
@@ -85,16 +90,17 @@ var pathParamRegex = regexp.MustCompile(`\{([A-Za-z0-9_]+)\}`)
 func parseBru(content string) Request {
 	lines := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
 	result := Request{
-		Method:  "get",
-		Headers: map[string]string{},
-		Query:   map[string]string{},
-		Params:  map[string]string{},
-		Name:    "Unnamed",
+		Method:     "get",
+		Headers:    map[string]string{},
+		Query:      map[string]string{},
+		PathParams: map[string]string{},
+		Name:       "Unnamed",
 	}
 
 	section := ""
 	sectionType := ""
 	buffer := []string{}
+	bodyDepth := 0
 
 	isMethodBlock := func(name string) bool {
 		switch name {
@@ -143,12 +149,17 @@ func parseBru(content string) Request {
 				section = "query"
 				sectionType = ""
 			} else if name == "params" {
-				section = "params"
-				sectionType = ""
+				if typeName == "query" {
+					section = "params_query"
+				} else {
+					section = "params"
+				}
+				sectionType = typeName
 			} else if name == "body" {
 				section = "body"
 				sectionType = typeName
 				result.BodyType = typeName
+				bodyDepth = 1
 			} else {
 				section = "ignore"
 				sectionType = ""
@@ -157,10 +168,31 @@ func parseBru(content string) Request {
 			continue
 		}
 
+		if section == "body" {
+			// Count all braces in the line to track nesting depth
+			for _, ch := range rawLine {
+				if ch == '{' {
+					bodyDepth++
+				} else if ch == '}' {
+					bodyDepth--
+				}
+			}
+			if bodyDepth <= 0 {
+				flushBuffer()
+				section = ""
+				sectionType = ""
+				bodyDepth = 0
+				continue
+			}
+			buffer = append(buffer, rawLine)
+			continue
+		}
+
 		if line == "}" {
 			flushBuffer()
 			section = ""
 			sectionType = ""
+			bodyDepth = 0
 			continue
 		}
 
@@ -172,12 +204,12 @@ func parseBru(content string) Request {
 			} else if k == "method" {
 				result.Method = strings.ToLower(v)
 			} else if k == "url" {
-				result.URL = v
+				setURL(&result, v)
 			}
 		case "method":
 			k, v := splitKeyValue(line)
 			if k == "url" {
-				result.URL = v
+				setURL(&result, v)
 			}
 		case "headers":
 			k, v := splitKeyValue(line)
@@ -189,13 +221,16 @@ func parseBru(content string) Request {
 			if k != "" {
 				result.Query[k] = v
 			}
+		case "params_query":
+			k, v := splitKeyValue(line)
+			if k != "" {
+				result.Query[k] = v
+			}
 		case "params":
 			k, v := splitKeyValue(line)
 			if k != "" {
-				result.Params[k] = v
+				result.PathParams[k] = v
 			}
-		case "body":
-			buffer = append(buffer, rawLine)
 		}
 	}
 
@@ -211,6 +246,40 @@ func splitKeyValue(line string) (string, string) {
 	key := strings.TrimSpace(parts[0])
 	value := strings.TrimSpace(strings.Join(parts[1:], ":"))
 	return key, value
+}
+
+func setURL(req *Request, raw string) {
+	cleaned, query := extractQueryFromURL(raw)
+	req.URL = cleaned
+	for k, v := range query {
+		if _, exists := req.Query[k]; !exists {
+			req.Query[k] = v
+		}
+	}
+}
+
+func extractQueryFromURL(raw string) (string, map[string]string) {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
+		return raw, map[string]string{}
+	}
+	parts := strings.SplitN(trimmed, "?", 2)
+	if len(parts) < 2 {
+		return raw, map[string]string{}
+	}
+	query := map[string]string{}
+	values, err := url.ParseQuery(parts[1])
+	if err != nil {
+		return parts[0], query
+	}
+	for k, v := range values {
+		if len(v) > 0 {
+			query[k] = v[0]
+		} else {
+			query[k] = ""
+		}
+	}
+	return parts[0], query
 }
 
 func buildOpenAPI(requests []Request) OpenAPI {
@@ -238,7 +307,7 @@ func buildOpenAPI(requests []Request) OpenAPI {
 				Example:  value,
 			})
 		}
-		for name, value := range req.Params {
+		for name, value := range req.PathParams {
 			parameters = append(parameters, Parameter{
 				Name:     name,
 				In:       "path",
@@ -399,15 +468,24 @@ func buildRequestBody(req Request) *RequestBody {
 		contentType = v
 	}
 
-	example := any(req.Body)
+	var media MediaType
 	if strings.Contains(strings.ToLower(contentType), "json") {
-		example = safeJSON(req.Body)
+		parsed := safeJSON(req.Body)
+		media = MediaType{
+			Schema:  &MediaSchema{Type: "object"},
+			Example: parsed,
+		}
+	} else {
+		media = MediaType{
+			Schema:  &MediaSchema{Type: "string"},
+			Example: req.Body,
+		}
 	}
 
 	return &RequestBody{
 		Required: true,
 		Content: map[string]MediaType{
-			contentType: {Example: example},
+			contentType: media,
 		},
 	}
 }
