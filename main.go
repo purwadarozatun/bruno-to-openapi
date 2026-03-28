@@ -19,15 +19,16 @@ const (
 )
 
 type Request struct {
-	Method     string
-	URL        string
-	Headers    map[string]string
-	Query      map[string]string
-	PathParams map[string]string
-	Body       string
-	BodyType   string
-	Name       string
-	Tag        string
+	Method      string
+	URL         string
+	Headers     map[string]string
+	Query       map[string]string
+	PathParams  map[string]string
+	Body        string
+	BodyType    string
+	Name        string
+	Tag         string
+	Description string
 }
 
 type OpenAPI struct {
@@ -48,6 +49,7 @@ type Server struct {
 
 type Operation struct {
 	Summary     string              `yaml:"summary,omitempty"`
+	Description string              `yaml:"description,omitempty"`
 	Tags        []string            `yaml:"tags,omitempty"`
 	Parameters  []Parameter         `yaml:"parameters,omitempty"`
 	RequestBody *RequestBody        `yaml:"requestBody,omitempty"`
@@ -117,6 +119,11 @@ func parseBru(content string) Request {
 			if raw != "" {
 				result.Body = raw
 			}
+		} else if section == "docs" && len(buffer) > 0 {
+			raw := strings.TrimSpace(strings.Join(buffer, "\n"))
+			if raw != "" {
+				result.Description = raw
+			}
 		}
 		buffer = []string{}
 	}
@@ -160,6 +167,10 @@ func parseBru(content string) Request {
 				sectionType = typeName
 				result.BodyType = typeName
 				bodyDepth = 1
+			} else if name == "docs" {
+				section = "docs"
+				sectionType = ""
+				bodyDepth = 1
 			} else {
 				section = "ignore"
 				sectionType = ""
@@ -168,7 +179,7 @@ func parseBru(content string) Request {
 			continue
 		}
 
-		if section == "body" {
+		if section == "body" || section == "docs" {
 			// Count all braces in the line to track nesting depth
 			for _, ch := range rawLine {
 				if ch == '{' {
@@ -329,8 +340,9 @@ func buildOpenAPI(requests []Request) OpenAPI {
 		}
 
 		op := Operation{
-			Summary:   req.Name,
-			Responses: map[string]Response{"200": {Description: "Success"}},
+			Summary:     req.Name,
+			Description: req.Description,
+			Responses:   map[string]Response{"200": {Description: "Success"}},
 		}
 		if req.Tag != "" {
 			op.Tags = []string{req.Tag}
